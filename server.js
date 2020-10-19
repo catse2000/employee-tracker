@@ -1,7 +1,24 @@
-const inquirer = require('inquirer');
+const mysql = require('mysql2');
+const inquirer = require("inquirer");
 
-const promptMenu = () => {
-    return inquirer.prompt([
+const connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    // Your MySQL username
+    user: 'root',
+    // Your MySQL password
+    password: 'pwXtd5eQZEBwM4Qk',
+    database: 'employees'
+  });
+
+  connection.connect(err => {
+    if (err) throw err;
+    console.log('connected as id ' + connection.threadId);
+    mainMenu();
+  });
+
+  function mainMenu() {
+    inquirer.prompt([
         {
             type: 'list',
             name: 'menu',
@@ -13,7 +30,8 @@ const promptMenu = () => {
                "Add a Department",
                "Add a Role", 
                "Add an Employee",
-               "Update an Employee Role"
+               "Update an Employee Role",
+               "Exit"
             ]
         }
     ])
@@ -40,8 +58,11 @@ const promptMenu = () => {
             case 'Update an Employee Role':
                 console.log("You chose to 'Update an Employee Role'");
                 break;
+            case "Exit":
+                connection.end();
+                break;
+            default: 
+                mainMenu();
         };
     });
 };
-
-promptMenu();
