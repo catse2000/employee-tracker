@@ -24,9 +24,9 @@ const connection = mysql.createConnection({
             name: 'menu',
             message: 'What would you like to do?',
             choices: [
-               "View All Departments",
-               "View All Roles",
-               "View All Employees",
+               "View Departments",
+               "View Roles",
+               "View Employees",
                "Add a Department",
                "Add a Role", 
                "Add an Employee",
@@ -37,14 +37,17 @@ const connection = mysql.createConnection({
     ])
     .then(menuChoice => {
         switch(menuChoice.menu) {
-            case 'View All Departments':
+            case 'View Departments':
                 console.log("You chose to 'View All Departments!'");
+                displayDepartments();
                 break;
-            case 'View All Roles':
+            case 'View Roles':
                 console.log("You chose to 'View All Employees'");
+                displayRoles();
                 break;
-            case 'View All Employees':
+            case 'View Employees':
                 console.log("You chose to 'View All Employees'");
+                displayEmployees();
                 break;
             case 'Add a Department':
                 console.log("You chose to 'Add a Department'");
@@ -66,3 +69,48 @@ const connection = mysql.createConnection({
         };
     });
 };
+
+function displayDepartments() {
+    const sql = `SELECT id, dept_name FROM department ORDER BY dept_name`;
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        mainMenu();
+    });
+};
+
+function displayRoles() {
+    const sql = `SELECT emp_role.title AS Title, 
+                emp_role.id AS "Title ID", 
+                department.dept_name As Department, 
+                emp_role.salary AS Salary 
+                FROM emp_role 
+                LEFT JOIN department ON emp_role.department_id = department.id
+                ORDER BY department.dept_name`;
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        mainMenu();
+    });
+};
+
+function displayEmployees() {
+    const sql = `SELECT employee.id AS "Employee ID", 
+                employee.first_name AS "First Name", 
+                employee.last_name AS "Last Name", 
+                emp_role.title AS "Title", 
+                department.dept_name AS "Department", 
+                emp_role.salary AS "Salary" 
+                FROM employee
+                LEFT JOIN emp_role
+                ON employee.emp_role_id = emp_role.id
+                LEFT JOIN department
+                ON emp_role.department_id = department.id
+                ORDER BY employee.last_name`;
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        mainMenu();
+    });
+};
+
