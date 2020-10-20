@@ -69,7 +69,7 @@ const connection = mysql.createConnection({
 };
 
 function displayDepartments() {
-    const sql = `SELECT id, dept_name FROM department ORDER BY dept_name`;
+    const sql = `SELECT id, dept_name FROM department`;
     connection.query(sql, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -83,8 +83,7 @@ function displayRoles() {
                 department.dept_name As Department, 
                 emp_role.salary AS Salary 
                 FROM emp_role 
-                LEFT JOIN department ON emp_role.department_id = department.id
-                ORDER BY department.dept_name`;
+                LEFT JOIN department ON emp_role.department_id = department.id`;
     connection.query(sql, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -103,8 +102,7 @@ function displayEmployees() {
                 LEFT JOIN emp_role
                 ON employee.emp_role_id = emp_role.id
                 LEFT JOIN department
-                ON emp_role.department_id = department.id
-                ORDER BY employee.last_name`;
+                ON emp_role.department_id = department.id`;
     connection.query(sql, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -130,9 +128,6 @@ function addDepartment() {
             displayDepartments();
         })
     })
-    .then(() => {
-        mainMenu()
-    });
 };
 
 function addRole() {
@@ -216,7 +211,7 @@ function updateEmployee() {
     .then(({employee_id, emp_role}) => {
         const sql = `UPDATE employee SET emp_role_id = ?
                     WHERE id = ?`;
-        const params = [employee_id, emp_role];
+        const params = [emp_role, employee_id];
         connection.query(sql, params, (err, res) => {
             if (err) throw err;
             console.log(`Employee was updated!`);
