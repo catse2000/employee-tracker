@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 const inquirer = require("inquirer");
 const { connect } = require('http2');
 
+// create the initial connection to the SQL server
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -18,8 +19,9 @@ const connection = mysql.createConnection({
     mainMenu();
   });
 
+  // Main Navigational Menu
   function mainMenu() {
-    inquirer.prompt([
+    inquirer.prompt([ //Prompt the user
         {
             type: 'list',
             name: 'menu',
@@ -37,7 +39,7 @@ const connection = mysql.createConnection({
         }
     ])
     .then(menuChoice => {
-        switch(menuChoice.menu) {
+        switch(menuChoice.menu) { //choose a selection based on user choice
             case 'View Departments':
                 displayDepartments();
                 break;
@@ -68,7 +70,8 @@ const connection = mysql.createConnection({
     });
 };
 
-function displayDepartments() {
+// Displays all departments in database
+function displayDepartments() { 
     const sql = `SELECT id, dept_name FROM department`;
     connection.query(sql, (err, res) => {
         if (err) throw err;
@@ -77,6 +80,7 @@ function displayDepartments() {
     });
 };
 
+// Displays all roles in database
 function displayRoles() {
     const sql = `SELECT emp_role.title AS Title, 
                 emp_role.id AS "Title ID", 
@@ -91,6 +95,7 @@ function displayRoles() {
     });
 };
 
+// Displays all Employees in database
 function displayEmployees() {
     const sql = `SELECT employee.id AS "Employee ID", 
                 employee.first_name AS "First Name", 
@@ -110,6 +115,7 @@ function displayEmployees() {
     });
 };
 
+// Function to add a Department to the database
 function addDepartment() {
     inquirer.prompt([
         {
@@ -130,6 +136,7 @@ function addDepartment() {
     })
 };
 
+// Function to add a Role to the database
 function addRole() {
     inquirer.prompt([
         {
@@ -160,6 +167,7 @@ function addRole() {
     })
 };
 
+// Function to add an Employee to the database
 function addEmployee() {
     inquirer.prompt([
         {
@@ -195,6 +203,7 @@ function addEmployee() {
     })
 };
 
+// Function to update an Employee's Role in the database
 function updateEmployee() {
     inquirer.prompt([
         {
